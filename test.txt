@@ -30,3 +30,12 @@ Go to Insights
 Go to Network
 Copy the network diagram and paste into your final writeup
 Turn in the URL of your gitHub repo.
+
+Resources
+Link to tutorial video/script (to be uploaded after class)
+Project Mgt with Git and GitHub.pptx
+Pleasantly nerdy introduction to Git and GitHubLinks to an external site.
+
+ 
+GitHub DesktopLinks to an external site. 
+Help setting up RStudio with GitHubLinks to an external site. 
