@@ -1,1 +1,32 @@
 Test out features of GitHub 
+
+Github Setup
+Git is currently the standard for version control software and can be used to track changes in your projects. It allows you to revert to any "commit" and to create branches for experimentation.
+
+GitHub is an online platform used for version control and collaborative software development. It provides a place to host code, track changes to code over time, and collaborate with others on  projects. In this course, you will be using GitHub to create your individual analytics portfolio. You may also want to use it in your group to collaborate on the project.
+
+Objectives
+Gain experience using Git and GitHub
+Create a repository
+Push to GitHub
+Perform simple commits
+Assignments
+Using the Git program you are most comfortable do the following.
+
+Option 1: Create a new Git repository from scratch
+
+Option 2: Add a Git repository to an existing folder
+
+Create an account at GitHub.com (if you haven’t already)
+
+Once this is done, do the following.
+
+Make edits to one or more files in the folder
+Commit those changes
+(Feel free to repeat as often as you like)
+Push changes to your GitHub account
+Browse to your repository on GitHub and do the following
+Go to Insights
+Go to Network
+Copy the network diagram and paste into your final writeup
+Turn in the URL of your gitHub repo.
