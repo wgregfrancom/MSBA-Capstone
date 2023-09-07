@@ -33,9 +33,9 @@ Turn in the URL of your gitHub repo.
 
 Resources
 Link to tutorial video/script (to be uploaded after class)
-Project Mgt with Git and GitHub.pptx
-Pleasantly nerdy introduction to Git and GitHubLinks to an external site.
+Project Mgt with Git and GitHub.pptx::https://utah.instructure.com/courses/895161/files/150230513?wrap=1
+Pleasantly nerdy introduction to Git and GitHubLinks to an external site.::https://www.youtube.com/watch?v=BCQHnlnPusY&ab_channel=TheCodingTrain
 
  
-GitHub DesktopLinks to an external site. 
-Help setting up RStudio with GitHubLinks to an external site. 
+GitHub DesktopLinks to an external site.::https://desktop.github.com/
+Help setting up RStudio with GitHubLinks to an external site. :: https://gist.github.com/Z3tt/3dab3535007acf108391649766409421
