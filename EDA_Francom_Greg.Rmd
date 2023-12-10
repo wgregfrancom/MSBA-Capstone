@@ -1,0 +1,149 @@
+---
+title: "EDA_Francom_Greg"
+output: html_notebook
+---
+
+Exploratory Data Analysis for Kaggle Home Credit Group project
+
+By using substitute data as a proxy for traditional credit scores (FICO and BK), the analytics team attempts to evaluate which metrics are the best indicators for applicants repaying their loans. 
+
+This analytics problem appears to require a supervised classification model, with a target representing loan repayment difficulty. Let’s load some packages and take a look at the “application_train.csv” file.
+
+
+```{r}
+#Loading  packages
+
+library(tidyverse)
+library(ggplot2)
+install.packages("skimr")
+library(skimr)
+
+```
+
+```{r}
+#loading files
+
+credit_card_balance <- read_csv("credit_card_balance.csv")
+bureau <- read_csv("bureau.csv")
+bureau_balance <- read_csv("bureau_balance.csv")
+HomeCredit_columns_description <- read_csv("HomeCredit_columns_description.csv")
+application_train <- read_csv("application_train.csv")
+
+#there are a lot of rows, let's take a sample
+at <- application_train |> sample_n(10000)
+```
+
+View the data utilizing a few different methods, including Prof. Webb's suggestion of skim(). Some initial observations:
+- The data is unbalanced with respect to the target variable, which will skew accuracy. The majority class is clients without payment difficulties, measured at 1 - 0.0833 = .9167 * 100 = 91.67%
+- There are a lot on NA’s related to the housing details, less than half completion rate. Should we exclude from data? I don’t want to bias our results, so I would like to see any correlations and infer reasons why these questions are not completed. Are the missing values valuable? Could we include NA’s as a separate level?
+
+```{r}
+#Application file
+glimpse(at)
+HomeCredit_columns_description$Description
+summary(at)
+head(at)
+skim(at)
+```
+
+```{r}
+# Majority class
+mean(at$TARGET)
+(1 - mean(at$TARGET)) *100 #sample mean 91.67%
+(1 - mean(application_train$TARGET)) *100 #original data mean 91.93%
+
+```
+
+Now to lightly clean up and factor the data.
+
+```{r}
+# Check variable type
+#lapply(d, class)
+
+# Change selected class to categorical variables (i.e., factors)
+
+at$TARGET <- as.factor(at$TARGET)
+at$CODE_GENDER <- as.factor(at$CODE_GENDER)
+at$FLAG_OWN_CAR <- as.factor(at$FLAG_OWN_CAR)
+at$FLAG_OWN_REALTY <- as.factor(at$FLAG_OWN_REALTY)
+at$FLAG_PHONE <- as.factor(at$FLAG_PHONE)
+at$FLAG_MOBIL <- as.factor(at$FLAG_MOBIL)
+at$FLAG_EMP_PHONE <- as.factor(at$FLAG_EMP_PHONE)
+at$FLAG_WORK_PHONE <- as.factor(at$FLAG_WORK_PHONE)
+at$FLAG_CONT_MOBILE <- as.factor(at$FLAG_CONT_MOBILE)
+at$FLAG_PHONE <- as.factor(at$FLAG_PHONE)
+at$FLAG_EMAIL <- as.factor(at$FLAG_EMAIL)
+at$OWN_CAR_AGE <- as.numeric(at$OWN_CAR_AGE)
+
+# check variable type again
+#lapply(d, class)
+```
+
+```{r}
+#Grain of the data in application_train  #one row per customer [1] 307511
+length(unique(application_train$SK_ID_CURR))
+nrow(application_train)
+
+```
+
+```{r}
+# Boxplot relationship with default
+at |>
+    mutate(target = factor(TARGET)) |>
+    ggplot(aes(target, EXT_SOURCE_1)) +
+    geom_boxplot()
+
+# Fico-type score. Does that defeat the purpose of the project? Should we use these as predictors?
+```
+
+Exploring some selected variables related to the target we see some correlations and significance numbers. 
+
+```{r}
+model01 <- glm(TARGET ~ FLAG_OWN_CAR + FLAG_OWN_REALTY + CODE_GENDER + CNT_CHILDREN + AMT_INCOME_TOTAL + AMT_CREDIT + AMT_ANNUITY + AMT_GOODS_PRICE + DAYS_BIRTH + DAYS_EMPLOYED + DAYS_REGISTRATION + DAYS_ID_PUBLISH + FLAG_EMP_PHONE + FLAG_WORK_PHONE + FLAG_CONT_MOBILE + FLAG_PHONE + FLAG_EMAIL + CNT_FAM_MEMBERS, data = at,family=binomial(link='logit'))
+
+summary(model01)#$coefficients
+
+#OWN_CAR_AGE not working, FLAG_MOBIL
+```
+
+I think income and loan amount may be related. Let's just look at those variables. Total income doesn't seem like a strong predictor but credit and goods might be worth looking into. 
+
+```{r}
+model02 <- glm(TARGET ~ AMT_INCOME_TOTAL + AMT_CREDIT + AMT_ANNUITY + AMT_GOODS_PRICE, data = at,family=binomial(link='logit'))
+
+summary(model02)#$coefficients
+```
+
+
+Now looking at the social media relationships and phone change since I think those can be grouped together. 
+
+```{r}
+model_SC <- glm(TARGET ~ OBS_30_CNT_SOCIAL_CIRCLE + DEF_30_CNT_SOCIAL_CIRCLE + OBS_60_CNT_SOCIAL_CIRCLE + DEF_60_CNT_SOCIAL_CIRCLE + DAYS_LAST_PHONE_CHANGE, data = at,family=binomial(link='logit'))
+summary(model_SC)#$coefficients
+```
+
+
+What about housing? Using Jeremy's example during the webinar, let's look at housing type as it relates to default rates. It looks like Rented Apartment and With Parents housing types contribute to the highest issues with repayment. 
+
+```{r}
+housing_type <- application_train |> summarise(default_rate=mean(TARGET),sample_size=n(),.by=NAME_HOUSING_TYPE)
+housing_type
+
+ggplot(housing_type) + geom_col(aes(x=default_rate, y=NAME_HOUSING_TYPE))
+```
+
+Results
+My initial inclination of total income being a strong predictor was proven false, as total credit and the goods price amounts appeared to be better variables to explore. Age and housing type also may be worth looking at more closely. Further analysis on these variables could prove to be a worthwill exercise in predicting loan default rates for new borrowers. 
+
+
+
+
+
+
+
+
+
+
+
+
+
